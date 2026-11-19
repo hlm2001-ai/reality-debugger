@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#070d16" />
+  <meta name="description" content="Reality Debugger: Glitch City — explore a broken 3D world and restore its rules using hand gestures." />
+  <title>Reality Debugger — Glitch City</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main id="app">
+    <canvas id="world" aria-label="Interactive third-person 3D city game"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="topHud" class="hud hidden">
+      <div class="brand"><div class="brand-mark">R<span>∕</span>D</div><div class="brand-copy"><strong>REALITY <i>DEBUGGER</i></strong><small>GLITCH CITY <span class="version">V1.0</span></small></div></div>
+      <div class="mission"><span class="micro">WORLD INTEGRITY</span><div class="mission-track"><div id="integrityFill"></div></div><strong id="integrityText">0 / 3 ANOMALIES RESOLVED</strong></div>
+      <div class="top-actions"><button id="cameraToggle" class="tool-btn" title="Enable gesture control">◎ <span>CAMERA OFF</span></button><button id="settingsBtn" class="tool-btn" title="Settings">⚙</button></div>
+    </div>
+    <div id="leftHud" class="hud hidden"><div class="panel-heading">LIVE SECTOR <span class="status-dot"></span></div><div id="map" class="mini-map"><div class="map-street h"></div><div class="map-street v"></div><div id="mapPlayer" class="map-player"></div><div id="mapBeacons"></div></div><div class="panel-foot"><span id="coordText">GRID 00 / 00</span><span>SECTOR 07</span></div><div id="nearby" class="nearby">Find an anomaly to begin</div></div>
+    <div id="rightHud" class="hud hidden"><div id="handPanel"><div class="panel-heading">HAND TRACKER <span id="trackerLive" class="tracker-state">OFFLINE</span></div><div class="feed"><video id="cam" playsinline autoplay muted></video><canvas id="landmarks"></canvas><div class="crosshair-guide"><span class="guide-vertical"></span><span class="guide-horizontal"></span><span class="guide-mid"></span></div><span id="cameraStatus" class="camera-status">Camera is off</span></div><div class="tracker-info"><span id="gestureLabel">NO GESTURE</span><span id="trackerModeLabel">MOVE MODE</span></div><div class="hand-meter"><div id="handMeterFill"></div></div><div class="camera-actions"><button id="calibrateBtn" class="ghost-mini">⊕ Calibrate</button><button id="cameraStopBtn" class="ghost-mini">Stop camera</button></div></div></div>
+    <div id="bottomHud" class="hud hidden"><div class="move-help"><span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span><span class="desc">MOVE / STEER</span><span class="help-divider"></span><span class="kbd">E</span><span class="desc">DEBUG</span><span class="help-divider"></span><span class="desc">DRAG MOUSE TO LOOK</span></div><div class="mode-pill" id="modePill"><span class="mode-dot"></span><span id="modeName">EXPLORE MODE</span></div></div>
+    <div id="objective" class="hud hidden"><div class="objective-tag">CURRENT OBJECTIVE</div><strong id="objectiveName">Explore the anomaly field</strong><span id="objectiveHint">Follow the beacons to find reality fractures.</span></div>
+    <div id="floatingNodes" class="hidden"><div id="debugLink" class="debug-line"></div><button id="coreNode" class="debug-node" aria-label="Drag anomaly core to target"><span class="node-center">◈</span><small>GRAB CORE</small></button><div id="anchorNode" class="anchor-node"><span>✳</span><small>DROP HERE</small></div></div>
+    <div id="debugReadout" class="hud hidden"><div class="panel-heading">REALITY INTERFACE <span class="danger-status">SYSTEM UNSTABLE</span></div><h2 id="glitchTitle">REVERSE GRAVITY</h2><p id="glitchDescription">Pinch the core and drag it to the target.</p><div class="progress-row"><span>RECONSTRUCTION</span><strong id="repairPercent">0%</strong></div><div class="mission-track"><div id="repairFill"></div></div><button id="exitDebug" class="secondary">EXIT DEBUG MODE <small>[E]</small></button></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="touchControls" class="hidden"><div class="touch-pad"><button data-key="KeyW">▲</button><div><button data-key="KeyA">◀</button><button data-key="KeyS">▼</button><button data-key="KeyD">▶</button></div></div><button id="touchDebug" class="touch-debug">DEBUG<br/>MODE</button></div>
+    <div id="startScreen" class="overlay"><div class="scanlines"></div><div class="hero-copy"><div class="hero-eyebrow"><span class="live-dot"></span> AN INTERACTIVE 3D EXPERIMENT <span class="line"></span> VERSION 01</div><h1>REALITY<br/><em>DEBUGGER<span class="flash">_</span></em></h1><div class="hero-sub">GLITCH CITY <span>///</span> YOUR WORLD IS BREAKING.</div><p>Walk through a corrupted city. Hunt down impossible anomalies. Repair reality itself — with your hands.</p><div class="hero-cta"><button id="startBtn" class="primary">ENTER GLITCH CITY <span>↗</span></button><button id="startCameraBtn" class="secondary">◎ START WITH HAND TRACKING</button></div><div class="intro-help"><span>⌨ WASD TO EXPLORE</span><span>◎ LIVE HAND GESTURES</span><span>◈ 3 REALITY ANOMALIES</span></div></div><div class="hero-side"><div class="vertical-label">SYSTEM BREACH DETECTED // 03 ACTIVE INCIDENTS</div><div class="signal-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><div class="hero-footer"><span>BUILT AS A BROWSER GAME · NO PAID API</span><span>CAMERA VIDEO STAYS ON YOUR DEVICE</span></div></div>
+    <div id="settingsModal" class="modal hidden"><div class="modal-card"><div class="panel-heading">SYSTEM SETTINGS<button id="closeSettings" class="close">✕</button></div><label>Graphics quality<select id="quality"><option value="high">HIGH — cinema</option><option value="medium">MEDIUM — balanced</option><option value="low">LOW — performance</option></select></label><label>Gesture sensitivity <span id="sensText">1.0×</span><input id="sensitivity" type="range" min="0.6" max="1.8" step="0.1" value="1" /></label><label><input type="checkbox" id="invertHand" checked /> Mirrored camera movement</label><button id="resetWorld" class="secondary wide">↺ RESET ALL THREE ANOMALIES</button><div class="settings-tip">Camera processing runs in your own browser. Gesture controls require a compatible browser, camera access and HTTPS or localhost.</div></div></div>
+    <div id="victory" class="overlay hidden"><div class="victory-card"><span class="gold-label">SYSTEM RESTORED</span><h2>REALITY<br/><em>REPAIRED.</em></h2><p>Three anomalies neutralized. One world rewritten.</p><button id="replay" class="primary">RESTART THE SIMULATION ↗</button></div></div>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
